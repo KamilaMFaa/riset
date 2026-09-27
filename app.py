@@ -5,8 +5,23 @@ Menggunakan SBERT-BERTopic
 Dashboard ini HANYA membaca hasil preprocessing & topic modeling yang sudah selesai
 (notebook 01, 01b, 02, 02b). Tidak ada proses SBERT/embedding/BERTopic/HDBSCAN/UMAP
 yang dijalankan di sini -- silakan lihat komentar di tiap fungsi load_*.
+
+Perubahan pada versi ini (lihat CHANGELOG.md / penjelasan yang menyertai file ini):
+- Menambahkan `topic_label_display`: label topic yang lebih ramah pengguna, dibuat
+  dari `topic_label_auto` HANYA untuk tampilan (kata "Bangkalan" dihapus dari LABEL
+  saja, lewat fungsi create_topic_display_label()). topic_label_auto, teks asli,
+  top_words, dan document-topic assignment TIDAK diubah sama sekali.
+- Halaman "Tren Isu" dipecah menjadi dua tab terpisah (Tren Berita & Tren Ulasan)
+  dengan filter yang benar-benar spesifik untuk metadata masing-masing sumber, dan
+  grafik yang dihitung ulang (jumlah dokumen & proporsi) berdasarkan agregasi
+  langsung dari data/processed/dashboard_topic_data.csv sesuai filter yang aktif --
+  BUKAN menjalankan ulang topic modeling, hanya pandas groupby dari hasil yang sudah
+  ada, karena file agregat lama (topic_temporal_*_final.csv, topic_trends_final.csv)
+  tidak memiliki granularitas kecamatan/tempat sehingga tidak bisa dipakai untuk
+  tren yang responsif terhadap filter wilayah/tempat.
 """
 
+import re
 import json
 from pathlib import Path
 
@@ -45,11 +60,17 @@ OUTLIER_LABEL = "Outlier / Tidak Terklasifikasi"
 DISCLAIMER_LABEL = (
     "Topic yang ditampilkan merupakan hasil clustering teks menggunakan SBERT-BERTopic. "
     "Label topic (`topic_label_auto`) digunakan untuk membantu interpretasi dan **bukan** "
-    "merupakan label ground truth."
+    "merupakan label ground truth. Label yang ditampilkan di UI (`topic_label_display`) "
+    "hanyalah versi yang lebih ramah baca dari `topic_label_auto`."
 )
 DISCLAIMER_OUTLIER = (
     f"Topic {OUTLIER_TOPIC_ID} ({OUTLIER_LABEL}) merupakan dokumen yang tidak masuk ke topic "
     "reguler manapun -- bukan berarti dokumen tersebut membahas topik kesehatan tertentu."
+)
+DISCLAIMER_KETERBATASAN = (
+    "Grafik pada dashboard ini menunjukkan **jumlah dokumen yang dianalisis** dan "
+    "**proporsi dokumen** pada dataset penelitian (berita & ulasan Google Maps), "
+    "**bukan** klaim tentang tingkat kesehatan masyarakat Bangkalan secara umum."
 )
 
 
@@ -82,6 +103,92 @@ def beri_label_outlier(df: pd.DataFrame, kolom_topic: str = "topic",
     return df
 
 
+# =============================================================================
+# LABEL TOPIC YANG RAMAH PENGGUNA (topic_label_display)
+# =============================================================================
+_KATA_GEOGRAFIS = {"bangkalan", "kabupaten bangkalan"}
+_NORMALISASI_ISTILAH = {"covid19": "COVID-19", "covid-19": "COVID-19", "covid": "COVID-19"}
+
+
+def create_topic_display_label(label_auto, top_words: str = "") -> str:
+    """
+    Membuat `topic_label_display` dari `topic_label_auto`, HANYA untuk tampilan.
+
+    ATURAN (lihat juga poin 6 pada instruksi):
+    - topic_label_auto TIDAK PERNAH diubah di dataset asli; fungsi ini hanya
+      mengembalikan string baru.
+    - Label outlier dibiarkan apa adanya.
+    - Kata geografis "Bangkalan" dihapus HANYA dari label (bukan dari text,
+      top_words, publisher, atau kolom metadata lain).
+    - Jika setelah "Bangkalan" dihapus label menjadi kosong / tidak natural,
+      fallback ke kata utama pada `top_words` (bukan label bebas yang tidak
+      didukung data topic tersebut).
+    """
+    if label_auto is None or (isinstance(label_auto, float) and pd.isna(label_auto)):
+        return label_auto
+    label = str(label_auto).strip()
+    if label == OUTLIER_LABEL:
+        return label
+
+    # Pisahkan label berdasarkan kata sambung "dan" atau koma, mis.
+    # "Bangkalan, Sampah dan Lingkungan" -> ["Bangkalan", "Sampah", "Lingkungan"]
+    bagian = re.split(r"\s*,\s*|\s+dan\s+", label)
+    bagian = [b.strip() for b in bagian if b.strip()]
+
+    bagian_bersih = [b for b in bagian if b.lower() not in _KATA_GEOGRAFIS]
+    bagian_final = [_NORMALISASI_ISTILAH.get(b.lower(), b) for b in bagian_bersih]
+    label_baru = " dan ".join(bagian_final).strip()
+
+    # Fallback: label kosong / hanya sisa kata geografis -> pakai top_words
+    if not label_baru or label_baru.lower() in _KATA_GEOGRAFIS:
+        kata_utama = [
+            w.strip() for w in str(top_words or "").split(",")
+            if w.strip() and w.strip().lower() not in _KATA_GEOGRAFIS
+        ]
+        if kata_utama:
+            label_baru = " dan ".join(w.capitalize() for w in kata_utama[:2])
+        else:
+            label_baru = label  # fallback terakhir: label asli, tidak diubah
+
+    return label_baru
+
+
+def _tambahkan_topic_label_display(summary_df: pd.DataFrame) -> pd.DataFrame:
+    summary_df = summary_df.copy()
+    summary_df["topic_label_display"] = summary_df.apply(
+        lambda r: create_topic_display_label(r.get("topic_label_auto"), r.get("top_words", "")),
+        axis=1,
+    )
+    return summary_df
+
+
+# =============================================================================
+# UTILITAS FILTER KECAMATAN (mendukung nilai multi-kecamatan "A; B; C")
+# =============================================================================
+def split_kecamatan(nilai) -> list:
+    if pd.isna(nilai):
+        return []
+    return [k.strip() for k in str(nilai).split(";") if k.strip()]
+
+
+def get_kecamatan_options(df: pd.DataFrame, kolom: str = "kecamatan") -> list:
+    semua = set()
+    if kolom in df.columns:
+        for v in df[kolom].dropna():
+            semua.update(split_kecamatan(v))
+    return sorted(semua)
+
+
+def match_kecamatan(nilai, kecamatan_target) -> bool:
+    """True jika kecamatan_target ada pada daftar kecamatan baris ini (bisa multi-kecamatan)."""
+    if kecamatan_target is None:
+        return True
+    return kecamatan_target in split_kecamatan(nilai)
+
+
+# =============================================================================
+# LOADING SELURUH DATA (CACHED, dipanggil sekali)
+# =============================================================================
 @st.cache_data
 def load_semua_data() -> dict:
     """Memuat seluruh file data yang dibutuhkan dashboard. Dipanggil SEKALI (cached)."""
@@ -89,8 +196,12 @@ def load_semua_data() -> dict:
     data["dashboard"] = load_csv(str(REQUIRED_FILES["dashboard_topic_data"]))
     data["dashboard"] = beri_label_outlier(data["dashboard"])
 
-    data["summary_berita"] = beri_label_outlier(load_csv(str(REQUIRED_FILES["topic_summary_berita"])))
-    data["summary_ulasan"] = beri_label_outlier(load_csv(str(REQUIRED_FILES["topic_summary_ulasan"])))
+    data["summary_berita"] = _tambahkan_topic_label_display(
+        beri_label_outlier(load_csv(str(REQUIRED_FILES["topic_summary_berita"])))
+    )
+    data["summary_ulasan"] = _tambahkan_topic_label_display(
+        beri_label_outlier(load_csv(str(REQUIRED_FILES["topic_summary_ulasan"])))
+    )
 
     data["temporal_berita"] = load_csv(str(REQUIRED_FILES["topic_temporal_berita"]))
     data["temporal_ulasan"] = load_csv(str(REQUIRED_FILES["topic_temporal_ulasan"]))
@@ -98,6 +209,20 @@ def load_semua_data() -> dict:
     data["trends"] = beri_label_outlier(load_csv(str(REQUIRED_FILES["topic_trends"])))
 
     data["config"] = load_json(str(REQUIRED_FILES["final_topic_config"]))
+
+    # --- Bangun topic_label_display konsisten di dashboard, berdasarkan mapping ---
+    # per (source, topic) yang sudah dihitung sekali di tabel summary masing-masing.
+    map_berita = dict(zip(data["summary_berita"]["topic"], data["summary_berita"]["topic_label_display"]))
+    map_ulasan = dict(zip(data["summary_ulasan"]["topic"], data["summary_ulasan"]["topic_label_display"]))
+
+    df = data["dashboard"]
+    df["topic_label_display"] = df["topic_label_auto"]
+    mask_berita = df["source"] == "berita"
+    mask_ulasan = df["source"] == "ulasan"
+    df.loc[mask_berita, "topic_label_display"] = df.loc[mask_berita, "topic"].map(map_berita)
+    df.loc[mask_ulasan, "topic_label_display"] = df.loc[mask_ulasan, "topic"].map(map_ulasan)
+    data["dashboard"] = df
+
     return data
 
 
@@ -169,6 +294,8 @@ def halaman_beranda(data: dict):
         )
         st.caption("Detail metodologi lengkap ada di halaman **Metodologi**.")
 
+    st.caption(DISCLAIMER_KETERBATASAN)
+
 
 # =============================================================================
 # HALAMAN 2 -- ANALISIS TOPIC
@@ -202,22 +329,28 @@ def halaman_analisis_topic(data: dict):
         st.warning("Tidak ada topik reguler pada pilihan dataset ini.")
     else:
         fig = px.bar(
-            reguler, x="topic_label_auto", y="topic_size", color="dataset" if pilihan_dataset == "Semua" else None,
+            reguler, x="topic_label_display", y="topic_size", color="dataset" if pilihan_dataset == "Semua" else None,
             text="topic_size", barmode="group",
-            labels={"topic_label_auto": "Topic", "topic_size": "Jumlah Dokumen", "dataset": "Sumber"},
+            labels={"topic_label_display": "Topic", "topic_size": "Jumlah Dokumen", "dataset": "Sumber"},
         )
         fig.update_traces(textposition="outside")
         fig.update_layout(xaxis_tickangle=-30)
         st.plotly_chart(fig, width="stretch")
 
     st.subheader("Jumlah Dokumen, Persentase, dan Top Words per Topic")
-    kolom_tampil = ["dataset", "topic", "topic_label_auto", "topic_size", "percentage", "top_words"]
+    kolom_tampil = ["dataset", "topic", "topic_label_display", "topic_label_auto", "topic_size", "percentage", "top_words"]
     kolom_tampil = [k for k in kolom_tampil if k in ringkasan.columns]
     tabel_tampil = ringkasan[kolom_tampil].sort_values("topic_size", ascending=False)
     if "percentage" in tabel_tampil.columns:
         tabel_tampil = tabel_tampil.assign(percentage=(tabel_tampil["percentage"] * 100).round(1))
-    st.dataframe(tabel_tampil, width="stretch", hide_index=True,
-                 column_config={"percentage": st.column_config.NumberColumn("Persentase (%)", format="%.1f%%")})
+    st.dataframe(
+        tabel_tampil, width="stretch", hide_index=True,
+        column_config={
+            "topic_label_display": st.column_config.TextColumn("Topic (label ramah pengguna)"),
+            "topic_label_auto": st.column_config.TextColumn("topic_label_auto (teknis)"),
+            "percentage": st.column_config.NumberColumn("Persentase (%)", format="%.1f%%"),
+        },
+    )
 
     if not outlier.empty:
         for _, row in outlier.iterrows():
@@ -232,7 +365,7 @@ def halaman_analisis_topic(data: dict):
         st.caption("Tidak ada topik reguler untuk ditampilkan detailnya.")
     else:
         opsi_topic = reguler.apply(
-            lambda r: f"[{r['dataset']}] Topic {r['topic']} -- {r['topic_label_auto']}", axis=1
+            lambda r: f"[{r['dataset']}] {r['topic_label_display']} (Topic {r['topic']})", axis=1
         ).tolist()
         pilihan = st.selectbox("Pilih topic", opsi_topic)
         idx_dipilih = opsi_topic.index(pilihan)
@@ -247,6 +380,7 @@ def halaman_analisis_topic(data: dict):
         c3.metric("Topic ID", int(topic_id))
 
         st.write("**Top words:**", baris_topic["top_words"])
+        st.caption(f"Label teknis asli (`topic_label_auto`): {baris_topic['topic_label_auto']}")
         if "representative_document_ids" in baris_topic and pd.notna(baris_topic["representative_document_ids"]):
             st.write("**Contoh document_id representatif:**", baris_topic["representative_document_ids"])
 
@@ -287,7 +421,7 @@ def halaman_analisis_topic(data: dict):
 
             topic_dominan = (
                 df_berita_all[df_berita_all["topic"] != OUTLIER_TOPIC_ID]
-                .groupby("kecamatan")["topic_label_auto"]
+                .groupby("kecamatan")["topic_label_display"]
                 .agg(lambda s: s.value_counts().idxmax() if len(s) else "-")
                 .rename("topic_paling_sering_muncul").reset_index()
             )
@@ -310,63 +444,194 @@ def halaman_analisis_topic(data: dict):
             st.caption("Tidak ada data rating pada topik reguler ulasan.")
         else:
             fig_rating = px.histogram(
-                df_ulasan_all, x="rating", color="topic_label_auto", barmode="group",
-                labels={"rating": "Rating", "topic_label_auto": "Topic"},
+                df_ulasan_all, x="rating", color="topic_label_display", barmode="group",
+                labels={"rating": "Rating", "topic_label_display": "Topic"},
             )
             fig_rating.update_xaxes(dtick=1)
             st.plotly_chart(fig_rating, width="stretch")
 
 
 # =============================================================================
-# HALAMAN 3 -- TREN ISU
+# HALAMAN 3 -- TREN ISU (Tren Berita & Tren Ulasan, terpisah)
 # =============================================================================
-def halaman_tren_isu(data: dict):
-    st.title("Tren Isu dari Waktu ke Waktu")
-    st.info(DISCLAIMER_LABEL)
+def _hitung_tren(df_denom: pd.DataFrame, topic_col: str, topics_dipilih: list) -> pd.DataFrame:
+    """
+    Menghitung jumlah dokumen & proporsi per topic per periode (tahun_bulan).
 
-    trends = data["trends"].copy()
-    trends["dataset"] = trends["dataset"].replace({"berita": "Berita", "ulasan": "Ulasan"})
+    df_denom HARUS SUDAH difilter sesuai wilayah/tempat & periode yang sedang aktif.
+    Proporsi = jumlah dokumen topic / total dokumen pada periode & filter aktif
+    (denominator = seluruh dokumen pada df_denom untuk periode tsb, termasuk topic
+    lain, supaya proporsi selalu dihitung ulang sesuai filter wilayah/tempat -- BUKAN
+    proporsi global).
+    """
+    kolom_hasil = ["tahun_bulan", topic_col, "jumlah_dokumen", "total_dokumen", "proporsi", "tahun_bulan_dt"]
+    if df_denom.empty or not topics_dipilih:
+        return pd.DataFrame(columns=kolom_hasil)
 
-    pilihan_dataset = st.radio("Dataset", ["Berita", "Ulasan"], horizontal=True)
-    subset = trends[trends["dataset"] == pilihan_dataset]
-    subset = subset[subset["topic"] != OUTLIER_TOPIC_ID]  # tren outlier tidak substantif untuk dianalisis
+    total_periode = df_denom.groupby("tahun_bulan").size().rename("total_dokumen")
 
-    if subset.empty:
-        st.warning("Tidak ada data tren topik reguler untuk pilihan ini.")
+    df_topic = df_denom[df_denom[topic_col].isin(topics_dipilih)]
+    if df_topic.empty:
+        return pd.DataFrame(columns=kolom_hasil)
+
+    hasil = df_topic.groupby(["tahun_bulan", topic_col]).size().rename("jumlah_dokumen").reset_index()
+    hasil = hasil.merge(total_periode, on="tahun_bulan", how="left")
+    hasil["proporsi"] = hasil["jumlah_dokumen"] / hasil["total_dokumen"]
+    hasil["tahun_bulan_dt"] = pd.to_datetime(hasil["tahun_bulan"], format="%Y-%m", errors="coerce")
+    hasil = hasil.sort_values("tahun_bulan_dt")
+    return hasil
+
+
+def _plot_tren(hasil: pd.DataFrame, topic_col: str, kolom_y: str, label_y: str, key: str):
+    fig = px.line(
+        hasil, x="tahun_bulan_dt", y=kolom_y, color=topic_col, markers=True,
+        labels={"tahun_bulan_dt": "Periode", kolom_y: label_y, topic_col: "Topic"},
+    )
+    fig.update_xaxes(tickformat="%Y-%m", tickangle=-45)
+    st.plotly_chart(fig, width="stretch", key=key)
+
+    with st.expander("Lihat data tren dalam tabel"):
+        tampil = hasil[["tahun_bulan", topic_col, "jumlah_dokumen", "total_dokumen", "proporsi"]].rename(
+            columns={"tahun_bulan": "Periode", topic_col: "Topic", "total_dokumen": "Total Dokumen (periode & filter aktif)"}
+        )
+        st.dataframe(tampil, width="stretch", hide_index=True)
+
+
+def _judul_tren_berita(kecamatan_dipilih: str, topics_dipilih: list) -> str:
+    lokasi = "Seluruh Kabupaten Bangkalan" if kecamatan_dipilih == "Semua Kecamatan" else f"Kecamatan {kecamatan_dipilih}"
+    if len(topics_dipilih) == 1:
+        return f"Tren Topik {topics_dipilih[0]} di {lokasi}"
+    return f"Tren Isu ({', '.join(topics_dipilih)}) di {lokasi}"
+
+
+def _tren_berita(data: dict):
+    df_b = data["dashboard"][data["dashboard"]["source"] == "berita"].copy()
+
+    topic_opsi = sorted(df_b.loc[df_b["topic"] != OUTLIER_TOPIC_ID, "topic_label_display"].dropna().unique().tolist())
+    kec_opsi = get_kecamatan_options(df_b, "kecamatan")
+
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        kecamatan_dipilih = st.selectbox("Kecamatan", ["Semua Kecamatan"] + kec_opsi, key="tren_berita_kec")
+    with col2:
+        metrik = st.radio("Metrik", ["Jumlah Dokumen", "Proporsi"], horizontal=True, key="tren_berita_metrik")
+
+    topics_dipilih = st.multiselect("Topic", topic_opsi, default=topic_opsi, key="tren_berita_topic")
+
+    tahun_tersedia = sorted(df_b["tahun"].dropna().unique().tolist())
+    if len(tahun_tersedia) >= 2:
+        rentang_tahun = st.slider(
+            "Periode (rentang tahun)", int(min(tahun_tersedia)), int(max(tahun_tersedia)),
+            (int(min(tahun_tersedia)), int(max(tahun_tersedia))), key="tren_berita_tahun",
+        )
+    else:
+        t = int(tahun_tersedia[0]) if tahun_tersedia else 0
+        rentang_tahun = (t, t)
+
+    if not topics_dipilih:
+        st.warning("Pilih minimal satu topic untuk menampilkan tren.")
         return
 
-    tahun_tersedia = sorted(pd.to_datetime(subset["tahun_bulan"], format="%Y-%m", errors="coerce").dt.year.dropna().unique())
-    if len(tahun_tersedia) >= 2:
-        rentang_tahun = st.slider("Rentang Tahun", int(min(tahun_tersedia)), int(max(tahun_tersedia)),
-                                   (int(min(tahun_tersedia)), int(max(tahun_tersedia))))
-    else:
-        rentang_tahun = (int(tahun_tersedia[0]), int(tahun_tersedia[0])) if tahun_tersedia else (0, 0)
+    kec_target = None if kecamatan_dipilih == "Semua Kecamatan" else kecamatan_dipilih
+    mask_kec = df_b["kecamatan"].apply(lambda v: match_kecamatan(v, kec_target))
+    mask_tahun = df_b["tahun"].between(rentang_tahun[0], rentang_tahun[1])
+    df_denom = df_b[mask_kec & mask_tahun]
 
-    daftar_topic = sorted(subset["topic_label_auto"].dropna().unique().tolist())
-    topic_dipilih = st.multiselect("Topic", daftar_topic, default=daftar_topic)
-
-    metrik = st.radio("Tampilkan sebagai", ["Proporsi Topic", "Jumlah Dokumen"], horizontal=True)
-    kolom_y = "proporsi" if metrik == "Proporsi Topic" else "jumlah_dokumen"
-
-    tahun_dari_periode = pd.to_datetime(subset["tahun_bulan"], format="%Y-%m", errors="coerce").dt.year
-    subset_filtered = subset[
-        tahun_dari_periode.between(rentang_tahun[0], rentang_tahun[1])
-        & subset["topic_label_auto"].isin(topic_dipilih)
-    ].sort_values("tahun_bulan")
-
-    if subset_filtered.empty:
+    if df_denom.empty:
         st.warning("Tidak ada data pada kombinasi filter ini.")
         return
 
-    fig = px.line(
-        subset_filtered, x="tahun_bulan", y=kolom_y, color="topic_label_auto", markers=True,
-        labels={"tahun_bulan": "Periode (Tahun-Bulan)", kolom_y: metrik, "topic_label_auto": "Topic"},
-    )
-    fig.update_xaxes(tickangle=-45)
-    st.plotly_chart(fig, width="stretch")
+    hasil = _hitung_tren(df_denom, "topic_label_display", topics_dipilih)
+    if hasil.empty:
+        st.warning("Tidak ada dokumen dengan topic terpilih pada kombinasi filter ini.")
+        return
 
-    with st.expander("Lihat data tren dalam tabel"):
-        st.dataframe(subset_filtered, width="stretch", hide_index=True)
+    kolom_y = "jumlah_dokumen" if metrik == "Jumlah Dokumen" else "proporsi"
+    label_y = "Jumlah Dokumen" if metrik == "Jumlah Dokumen" else "Proporsi Dokumen"
+
+    st.markdown(f"#### {_judul_tren_berita(kecamatan_dipilih, topics_dipilih)}")
+    _plot_tren(hasil, "topic_label_display", kolom_y, label_y, key="chart_tren_berita")
+
+
+def _judul_tren_ulasan(tempat_dipilih: str, topics_dipilih: list) -> str:
+    lokasi = "Seluruh Tempat yang Dianalisis" if tempat_dipilih == "Semua Tempat" else tempat_dipilih
+    if len(topics_dipilih) == 1:
+        return f"Tren Topic {topics_dipilih[0]} pada {lokasi}"
+    return f"Tren Topic ({', '.join(topics_dipilih)}) pada {lokasi}"
+
+
+def _tren_ulasan(data: dict):
+    df_u = data["dashboard"][data["dashboard"]["source"] == "ulasan"].copy()
+
+    topic_opsi = sorted(df_u.loc[df_u["topic"] != OUTLIER_TOPIC_ID, "topic_label_display"].dropna().unique().tolist())
+    kategori_opsi = sorted(df_u["place_category"].dropna().unique().tolist())
+
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        kategori_dipilih = st.multiselect("Kategori Tempat", kategori_opsi, default=kategori_opsi, key="tren_ulasan_kategori")
+
+    df_u_kategori = df_u[df_u["place_category"].isin(kategori_dipilih)] if kategori_dipilih else df_u.iloc[0:0]
+    tempat_opsi = sorted(df_u_kategori["place_name"].dropna().unique().tolist())
+
+    with col2:
+        tempat_dipilih = st.selectbox("Tempat", ["Semua Tempat"] + tempat_opsi, key="tren_ulasan_tempat")
+
+    metrik = st.radio("Metrik", ["Jumlah Dokumen", "Proporsi"], horizontal=True, key="tren_ulasan_metrik")
+    topics_dipilih = st.multiselect("Topic", topic_opsi, default=topic_opsi, key="tren_ulasan_topic")
+
+    tahun_tersedia = sorted(df_u["tahun"].dropna().unique().tolist())
+    if len(tahun_tersedia) >= 2:
+        rentang_tahun = st.slider(
+            "Periode (rentang tahun)", int(min(tahun_tersedia)), int(max(tahun_tersedia)),
+            (int(min(tahun_tersedia)), int(max(tahun_tersedia))), key="tren_ulasan_tahun",
+        )
+    else:
+        t = int(tahun_tersedia[0]) if tahun_tersedia else 0
+        rentang_tahun = (t, t)
+
+    if not topics_dipilih:
+        st.warning("Pilih minimal satu topic untuk menampilkan tren.")
+        return
+    if not kategori_dipilih:
+        st.warning("Pilih minimal satu kategori tempat.")
+        return
+
+    mask_kategori = df_u["place_category"].isin(kategori_dipilih)
+    mask_tempat = pd.Series(True, index=df_u.index) if tempat_dipilih == "Semua Tempat" else (df_u["place_name"] == tempat_dipilih)
+    mask_tahun = df_u["tahun"].between(rentang_tahun[0], rentang_tahun[1])
+    df_denom = df_u[mask_kategori & mask_tempat & mask_tahun]
+
+    if df_denom.empty:
+        st.warning("Tidak ada data pada kombinasi filter ini.")
+        return
+
+    hasil = _hitung_tren(df_denom, "topic_label_display", topics_dipilih)
+    if hasil.empty:
+        st.warning("Tidak ada dokumen dengan topic terpilih pada kombinasi filter ini.")
+        return
+
+    kolom_y = "jumlah_dokumen" if metrik == "Jumlah Dokumen" else "proporsi"
+    label_y = "Jumlah Dokumen" if metrik == "Jumlah Dokumen" else "Proporsi Dokumen"
+
+    st.markdown(f"#### {_judul_tren_ulasan(tempat_dipilih, topics_dipilih)}")
+    _plot_tren(hasil, "topic_label_display", kolom_y, label_y, key="chart_tren_ulasan")
+
+
+def halaman_tren_isu(data: dict):
+    st.title("Tren Isu dari Waktu ke Waktu")
+    st.info(DISCLAIMER_LABEL)
+    st.caption(
+        "Filter Tren Berita dan Tren Ulasan dipisah karena metadata kedua sumber berbeda "
+        "(berita: kecamatan/publisher, ulasan: tempat/kategori tempat/rating)."
+    )
+    tab_berita, tab_ulasan = st.tabs(["📰 Tren Berita", "⭐ Tren Ulasan"])
+    with tab_berita:
+        _tren_berita(data)
+    with tab_ulasan:
+        _tren_ulasan(data)
+
+    st.divider()
+    st.caption(DISCLAIMER_KETERBATASAN)
 
 
 # =============================================================================
@@ -388,20 +653,29 @@ def halaman_eksplorasi_data(data: dict):
             tahun_dipilih = st.multiselect("Tahun", tahun_opsi, default=tahun_opsi)
             df_f = df_f[df_f["tahun"].isin(tahun_dipilih)]
 
-        if "topic_label_auto" in df_f.columns:
-            topic_opsi = sorted(df_f["topic_label_auto"].dropna().unique().tolist())
+        if "topic_label_display" in df_f.columns:
+            topic_opsi = sorted(df_f["topic_label_display"].dropna().unique().tolist())
             topic_dipilih = st.multiselect("Topic", topic_opsi, default=topic_opsi)
-            df_f = df_f[df_f["topic_label_auto"].isin(topic_dipilih)]
+            df_f = df_f[df_f["topic_label_display"].isin(topic_dipilih)]
 
         if "kecamatan" in df_f.columns and df_f["kecamatan"].notna().any():
-            kec_opsi = sorted(df_f["kecamatan"].dropna().unique().tolist())
+            kec_opsi = get_kecamatan_options(df_f, "kecamatan")
             kec_dipilih = st.multiselect("Kecamatan (berita)", kec_opsi, default=kec_opsi)
-            df_f = df_f[df_f["kecamatan"].isin(kec_dipilih) | df_f["kecamatan"].isna()]
+            if kec_dipilih:
+                mask_kec = df_f["kecamatan"].apply(
+                    lambda v: any(k in kec_dipilih for k in split_kecamatan(v))
+                )
+                df_f = df_f[mask_kec | df_f["kecamatan"].isna()]
 
         if "publisher" in df_f.columns and df_f["publisher"].notna().any():
             pub_opsi = sorted(df_f["publisher"].dropna().unique().tolist())
             pub_dipilih = st.multiselect("Publisher (berita)", pub_opsi, default=pub_opsi)
             df_f = df_f[df_f["publisher"].isin(pub_dipilih) | df_f["publisher"].isna()]
+
+        if "place_name" in df_f.columns and df_f["place_name"].notna().any():
+            tempat_opsi = sorted(df_f["place_name"].dropna().unique().tolist())
+            tempat_dipilih = st.multiselect("Tempat (ulasan)", tempat_opsi, default=tempat_opsi)
+            df_f = df_f[df_f["place_name"].isin(tempat_dipilih) | df_f["place_name"].isna()]
 
         if "place_category" in df_f.columns and df_f["place_category"].notna().any():
             kat_opsi = sorted(df_f["place_category"].dropna().unique().tolist())
@@ -425,7 +699,10 @@ def halaman_eksplorasi_data(data: dict):
     df_tampil = df_f[kolom_tampil].copy()
     df_tampil["text"] = df_tampil["text"].apply(lambda t: potong_teks(t, 180))
 
-    column_config = {}
+    column_config = {
+        "topic_label_display": st.column_config.TextColumn("Topic (label ramah pengguna)"),
+        "topic_label_auto": st.column_config.TextColumn("topic_label_auto (teknis)"),
+    }
     if "url" in df_tampil.columns:
         column_config["url"] = st.column_config.LinkColumn("URL")
 
@@ -496,6 +773,15 @@ def halaman_metodologi(data: dict):
         c2.metric("Jumlah Topic Reguler", h.get("total_regular_topics", "-"))
         c3.metric("Jumlah Outlier", h.get("total_outliers", "-"))
         c4.metric("Persentase Outlier", f"{h.get('outlier_percentage', 0) * 100:.1f}%")
+
+    st.divider()
+    st.markdown("**Label topic pada dashboard (`topic_label_display`)**")
+    st.write(
+        "Kolom `topic_label_display` dibuat dari `topic_label_auto` khusus untuk tampilan "
+        "(fungsi `create_topic_display_label()`), dengan menghapus kata geografis \"Bangkalan\" "
+        "dari label agar lebih natural dibaca. Label teknis asli (`topic_label_auto`), teks "
+        "dokumen, top_words, dan document-topic assignment TIDAK diubah."
+    )
 
     st.divider()
     st.caption(
