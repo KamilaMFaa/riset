@@ -1,0 +1,17 @@
+﻿dataset,METRIK,SEBELUM,SESUDAH
+berita,jumlah_baris,887.0,887.0
+berita,total_missing_value,0.0,0.0
+berita,jumlah_duplikasi_baris_penuh,0.0,0.0
+berita,panjang_teks_min,292.0,251.0
+berita,panjang_teks_max,17500.0,17500.0
+berita,panjang_teks_rata_rata,2550.34,2547.45
+berita,panjang_teks_median,2224.0,2224.0
+berita,jumlah_teks_kosong,0.0,0.0
+ulasan,jumlah_baris,7595.0,7595.0
+ulasan,total_missing_value,6213.0,6213.0
+ulasan,jumlah_duplikasi_baris_penuh,0.0,0.0
+ulasan,panjang_teks_min,2.0,2.0
+ulasan,panjang_teks_max,2772.0,2772.0
+ulasan,panjang_teks_rata_rata,76.39,76.63
+ulasan,panjang_teks_median,40.0,40.0
+ulasan,jumlah_teks_kosong,0.0,0.0

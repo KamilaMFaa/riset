@@ -1,0 +1,9 @@
+﻿dataset,model_id,min_topic_size,jumlah_topic,jumlah_outlier,proporsi_outlier,topic_size_distribution,topic_diversity,coherence,waktu_proses_detik
+berita,berita_mcs10,10,7,37,0.0754,"min=19, median=68, max=120, n_topik=7",0.4571,-1.1292,15.04
+berita,berita_mcs15,15,6,33,0.0672,"min=17, median=52, max=231, n_topik=6",0.5667,-1.0686,1.87
+berita,berita_mcs20,20,3,75,0.1527,"min=80, median=119, max=217, n_topik=3",0.5,-0.5211,1.86
+berita,berita_mcs30,30,3,137,0.279,"min=66, median=80, max=208, n_topik=3",0.5333,-0.6835,1.86
+ulasan,ulasan_mcs10,10,22,292,0.2274,"min=10, median=27, max=200, n_topik=22",0.65,-5.3755,7.68
+ulasan,ulasan_mcs15,15,13,202,0.1573,"min=19, median=52, max=349, n_topik=13",0.6769,-3.5026,5.35
+ulasan,ulasan_mcs20,20,11,234,0.1822,"min=32, median=67, max=351, n_topik=11",0.6636,-3.7895,6.66
+ulasan,ulasan_mcs30,30,2,0,0.0,"min=85, median=642, max=1199, n_topik=2",0.8,-2.0896,5.32

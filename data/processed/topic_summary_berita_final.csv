@@ -1,0 +1,8 @@
+﻿topic,topic_label_auto,topic_size,percentage,top_words,representative_document_ids
+-1,Outlier / Tidak Terklasifikasi,33,0.0672,(outlier -- tidak ada representasi kata topik),NEWS000002; NEWS000028; NEWS000038
+0,Bangkalan dan Kesehatan,231,0.4705,"bangkalan, kesehatan, masyarakat, tersebut, pelayanan, menjadi, kabupaten, dr, kegiatan, program",NEWS000005; NEWS000008; NEWS000009
+1,Covid19 dan Bangkalan,88,0.1792,"covid19, bangkalan, kasus, orang, kesehatan, kabupaten, positif, pasien, masyarakat, warga",NEWS000016; NEWS000061; NEWS000098
+2,Sampah dan Bangkalan,80,0.1629,"sampah, bangkalan, laut, tersebut, garam, lingkungan, pantai, limbah, desa, paus",NEWS000029; NEWS000033; NEWS000057
+3,Bayi dan Puskesmas,23,0.0468,"bayi, puskesmas, ibu, bidan, kepala, pihak, persalinan, keluarga, bangkalan, rahim",NEWS000032; NEWS000046; NEWS000091
+4,Sapi dan Kambing,19,0.0387,"sapi, kambing, hewan, karapan, bangkalan, ternak, karapan sapi, peternak, peternakan, penyakit",NEWS000180; NEWS000263; NEWS000274
+5,Siswa dan Makanan,17,0.0346,"siswa, makanan, mbg, kokop, keracunan, sampel, kesehatan, bambang, bangkalan, pangan",NEWS000024; NEWS000047; NEWS000267

@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-09-26 16:42:46",
+  "sumber_konfigurasi": "diambil otomatis dari data/processed/final_model_selection.csv dan model_config.json hasil 02_sbert_bertopic.ipynb",
+  "random_state": 42,
+  "sbert_model_used": "paraphrase-multilingual-MiniLM-L12-v2",
+  "umap_config": {
+    "n_neighbors": 15,
+    "n_components": 5,
+    "min_dist": 0.0,
+    "metric": "cosine",
+    "random_state": 42
+  },
+  "hdbscan": {
+    "min_cluster_size_berita": 15,
+    "min_cluster_size_ulasan": 30,
+    "metric": "euclidean",
+    "cluster_selection_method": "eom"
+  },
+  "representasi_topik": {
+    "vectorizer": "CountVectorizer",
+    "stop_words": "Indonesia (Sastrawi jika tersedia, fallback daftar bawaan)",
+    "ngram_range": [
+      1,
+      2
+    ],
+    "min_df": 2,
+    "catatan": "Hanya memengaruhi ekstraksi kata representasi topik (c-TF-IDF), tidak mengubah teks input SBERT maupun hasil clustering."
+  },
+  "hasil": {
+    "berita": {
+      "total_documents": 491,
+      "total_regular_topics": 6,
+      "total_outliers": 33,
+      "outlier_percentage": 0.0672,
+      "waktu_proses_detik": 14.67
+    },
+    "ulasan": {
+      "total_documents": 1284,
+      "total_regular_topics": 2,
+      "total_outliers": 0,
+      "outlier_percentage": 0.0,
+      "waktu_proses_detik": 5.84
+    }
+  },
+  "output_files": [
+    "document_topic_berita.csv",
+    "document_topic_ulasan.csv",
+    "topic_summary_berita_final.csv",
+    "topic_summary_ulasan_final.csv",
+    "topic_temporal_berita_final.csv",
+    "topic_temporal_ulasan_final.csv",
+    "topic_trends_final.csv",
+    "dashboard_topic_data.csv",
+    "final_topic_config.json"
+  ]
+}

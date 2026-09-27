@@ -1,0 +1,23 @@
+{
+  "tanggal_dijalankan": "2026-09-26 05:55:15",
+  "dataset_berita": {
+    "baris_sebelum": 887,
+    "baris_sesudah": 887,
+    "langkah": [
+      "remove_duplicate_news (dedup berdasarkan URL identik)",
+      "validate_dates (normalisasi Tanggal -> YYYY-MM-DD, flag tanggal_valid)",
+      "clean_news_text (hapus URL/HTML/boilerplate, normalisasi whitespace & unicode)",
+      "flag_relevansi_kesehatan (BUKAN filter final, hanya penanda untuk pemeriksaan manual)"
+    ]
+  },
+  "dataset_ulasan": {
+    "baris_sebelum": 7595,
+    "baris_sesudah": 7595,
+    "langkah": [
+      "remove_duplicate_reviews (dedup berdasarkan review_id identik)",
+      "validate_reviews (normalisasi rating, flag teks_kosong/teks_terlalu_pendek)",
+      "clean_review_text (hapus URL/HTML, normalisasi whitespace & unicode, emoji dipertahankan)",
+      "reviewer_name dihapus dari dataset kerja/hasil (alasan privasi)"
+    ]
+  }
+}

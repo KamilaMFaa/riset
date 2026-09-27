@@ -1,0 +1,266 @@
+﻿dataset,topic,topic_label_auto,tahun_bulan,jumlah_dokumen,proporsi
+berita,-1,Outlier / Tidak Terklasifikasi,2016-02,1,1.0
+berita,0,Bangkalan dan Kesehatan,2016-05,1,1.0
+berita,0,Bangkalan dan Kesehatan,2016-08,1,1.0
+berita,0,Bangkalan dan Kesehatan,2016-10,2,1.0
+berita,0,Bangkalan dan Kesehatan,2017-01,1,0.5
+berita,1,Covid19 dan Bangkalan,2017-01,1,0.5
+berita,0,Bangkalan dan Kesehatan,2017-03,1,1.0
+berita,5,Siswa dan Makanan,2017-05,1,1.0
+berita,-1,Outlier / Tidak Terklasifikasi,2017-07,1,1.0
+berita,2,Sampah dan Bangkalan,2017-08,1,1.0
+berita,3,Bayi dan Puskesmas,2017-09,1,1.0
+berita,2,Sampah dan Bangkalan,2017-10,1,1.0
+berita,-1,Outlier / Tidak Terklasifikasi,2018-01,1,1.0
+berita,0,Bangkalan dan Kesehatan,2018-02,1,1.0
+berita,0,Bangkalan dan Kesehatan,2018-03,1,0.5
+berita,3,Bayi dan Puskesmas,2018-03,1,0.5
+berita,5,Siswa dan Makanan,2018-04,1,1.0
+berita,0,Bangkalan dan Kesehatan,2018-05,1,1.0
+berita,-1,Outlier / Tidak Terklasifikasi,2018-09,1,0.3333
+berita,0,Bangkalan dan Kesehatan,2018-09,2,0.6667
+berita,0,Bangkalan dan Kesehatan,2018-12,1,0.5
+berita,2,Sampah dan Bangkalan,2018-12,1,0.5
+berita,0,Bangkalan dan Kesehatan,2019-01,2,1.0
+berita,0,Bangkalan dan Kesehatan,2019-02,1,0.5
+berita,1,Covid19 dan Bangkalan,2019-02,1,0.5
+berita,-1,Outlier / Tidak Terklasifikasi,2019-03,1,0.5
+berita,0,Bangkalan dan Kesehatan,2019-03,1,0.5
+berita,0,Bangkalan dan Kesehatan,2019-04,1,1.0
+berita,0,Bangkalan dan Kesehatan,2019-05,1,1.0
+berita,0,Bangkalan dan Kesehatan,2019-06,2,1.0
+berita,0,Bangkalan dan Kesehatan,2019-07,2,1.0
+berita,0,Bangkalan dan Kesehatan,2019-09,3,1.0
+berita,0,Bangkalan dan Kesehatan,2019-10,1,0.5
+berita,3,Bayi dan Puskesmas,2019-10,1,0.5
+berita,-1,Outlier / Tidak Terklasifikasi,2019-11,1,0.3333
+berita,0,Bangkalan dan Kesehatan,2019-11,2,0.6667
+berita,1,Covid19 dan Bangkalan,2019-12,2,1.0
+berita,0,Bangkalan dan Kesehatan,2020-01,2,1.0
+berita,0,Bangkalan dan Kesehatan,2020-02,1,0.5
+berita,3,Bayi dan Puskesmas,2020-02,1,0.5
+berita,0,Bangkalan dan Kesehatan,2020-03,1,0.5
+berita,1,Covid19 dan Bangkalan,2020-03,1,0.5
+berita,1,Covid19 dan Bangkalan,2020-04,1,1.0
+berita,0,Bangkalan dan Kesehatan,2020-05,4,0.6667
+berita,1,Covid19 dan Bangkalan,2020-05,1,0.1667
+berita,2,Sampah dan Bangkalan,2020-05,1,0.1667
+berita,0,Bangkalan dan Kesehatan,2020-06,3,0.75
+berita,1,Covid19 dan Bangkalan,2020-06,1,0.25
+berita,0,Bangkalan dan Kesehatan,2020-07,2,1.0
+berita,0,Bangkalan dan Kesehatan,2020-08,5,0.7143
+berita,2,Sampah dan Bangkalan,2020-08,2,0.2857
+berita,0,Bangkalan dan Kesehatan,2020-09,1,0.3333
+berita,1,Covid19 dan Bangkalan,2020-09,2,0.6667
+berita,0,Bangkalan dan Kesehatan,2020-10,2,0.5
+berita,1,Covid19 dan Bangkalan,2020-10,2,0.5
+berita,0,Bangkalan dan Kesehatan,2020-11,4,0.6667
+berita,1,Covid19 dan Bangkalan,2020-11,2,0.3333
+berita,0,Bangkalan dan Kesehatan,2020-12,2,0.3333
+berita,1,Covid19 dan Bangkalan,2020-12,4,0.6667
+berita,0,Bangkalan dan Kesehatan,2021-01,1,0.2
+berita,1,Covid19 dan Bangkalan,2021-01,1,0.2
+berita,2,Sampah dan Bangkalan,2021-01,3,0.6
+berita,-1,Outlier / Tidak Terklasifikasi,2021-02,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2021-02,1,0.1429
+berita,1,Covid19 dan Bangkalan,2021-02,1,0.1429
+berita,2,Sampah dan Bangkalan,2021-02,4,0.5714
+berita,1,Covid19 dan Bangkalan,2021-03,1,0.5
+berita,2,Sampah dan Bangkalan,2021-03,1,0.5
+berita,4,Sapi dan Kambing,2021-04,1,1.0
+berita,0,Bangkalan dan Kesehatan,2021-05,1,1.0
+berita,0,Bangkalan dan Kesehatan,2021-06,4,0.1026
+berita,1,Covid19 dan Bangkalan,2021-06,34,0.8718
+berita,2,Sampah dan Bangkalan,2021-06,1,0.0256
+berita,1,Covid19 dan Bangkalan,2021-07,2,0.4
+berita,2,Sampah dan Bangkalan,2021-07,3,0.6
+berita,0,Bangkalan dan Kesehatan,2021-08,2,0.5
+berita,1,Covid19 dan Bangkalan,2021-08,1,0.25
+berita,2,Sampah dan Bangkalan,2021-08,1,0.25
+berita,0,Bangkalan dan Kesehatan,2021-09,1,0.5
+berita,2,Sampah dan Bangkalan,2021-09,1,0.5
+berita,0,Bangkalan dan Kesehatan,2021-10,6,0.8571
+berita,1,Covid19 dan Bangkalan,2021-10,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2021-11,1,0.5
+berita,2,Sampah dan Bangkalan,2021-11,1,0.5
+berita,1,Covid19 dan Bangkalan,2021-12,2,0.5
+berita,2,Sampah dan Bangkalan,2021-12,2,0.5
+berita,-1,Outlier / Tidak Terklasifikasi,2022-01,1,0.1
+berita,0,Bangkalan dan Kesehatan,2022-01,5,0.5
+berita,1,Covid19 dan Bangkalan,2022-01,3,0.3
+berita,3,Bayi dan Puskesmas,2022-01,1,0.1
+berita,0,Bangkalan dan Kesehatan,2022-02,3,0.4286
+berita,1,Covid19 dan Bangkalan,2022-02,1,0.1429
+berita,2,Sampah dan Bangkalan,2022-02,1,0.1429
+berita,4,Sapi dan Kambing,2022-02,1,0.1429
+berita,5,Siswa dan Makanan,2022-02,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2022-03,3,0.75
+berita,2,Sampah dan Bangkalan,2022-03,1,0.25
+berita,0,Bangkalan dan Kesehatan,2022-04,1,0.3333
+berita,1,Covid19 dan Bangkalan,2022-04,1,0.3333
+berita,4,Sapi dan Kambing,2022-04,1,0.3333
+berita,0,Bangkalan dan Kesehatan,2022-05,2,0.4
+berita,4,Sapi dan Kambing,2022-05,3,0.6
+berita,0,Bangkalan dan Kesehatan,2022-06,2,0.5
+berita,4,Sapi dan Kambing,2022-06,2,0.5
+berita,0,Bangkalan dan Kesehatan,2022-08,1,0.3333
+berita,2,Sampah dan Bangkalan,2022-08,1,0.3333
+berita,4,Sapi dan Kambing,2022-08,1,0.3333
+berita,0,Bangkalan dan Kesehatan,2022-09,1,0.5
+berita,4,Sapi dan Kambing,2022-09,1,0.5
+berita,-1,Outlier / Tidak Terklasifikasi,2022-10,1,0.3333
+berita,4,Sapi dan Kambing,2022-10,1,0.3333
+berita,5,Siswa dan Makanan,2022-10,1,0.3333
+berita,0,Bangkalan dan Kesehatan,2022-11,6,0.8571
+berita,2,Sampah dan Bangkalan,2022-11,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2022-12,6,0.75
+berita,1,Covid19 dan Bangkalan,2022-12,1,0.125
+berita,4,Sapi dan Kambing,2022-12,1,0.125
+berita,-1,Outlier / Tidak Terklasifikasi,2023-01,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2023-01,3,0.4286
+berita,2,Sampah dan Bangkalan,2023-01,2,0.2857
+berita,3,Bayi dan Puskesmas,2023-01,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2023-02,1,0.0833
+berita,1,Covid19 dan Bangkalan,2023-02,1,0.0833
+berita,2,Sampah dan Bangkalan,2023-02,10,0.8333
+berita,0,Bangkalan dan Kesehatan,2023-03,2,0.3333
+berita,1,Covid19 dan Bangkalan,2023-03,2,0.3333
+berita,2,Sampah dan Bangkalan,2023-03,2,0.3333
+berita,2,Sampah dan Bangkalan,2023-04,1,1.0
+berita,-1,Outlier / Tidak Terklasifikasi,2023-05,1,0.2
+berita,0,Bangkalan dan Kesehatan,2023-05,3,0.6
+berita,1,Covid19 dan Bangkalan,2023-05,1,0.2
+berita,-1,Outlier / Tidak Terklasifikasi,2023-06,1,0.125
+berita,0,Bangkalan dan Kesehatan,2023-06,5,0.625
+berita,2,Sampah dan Bangkalan,2023-06,2,0.25
+berita,0,Bangkalan dan Kesehatan,2023-07,4,0.4444
+berita,1,Covid19 dan Bangkalan,2023-07,2,0.2222
+berita,2,Sampah dan Bangkalan,2023-07,3,0.3333
+berita,0,Bangkalan dan Kesehatan,2023-08,5,0.5556
+berita,1,Covid19 dan Bangkalan,2023-08,1,0.1111
+berita,2,Sampah dan Bangkalan,2023-08,2,0.2222
+berita,4,Sapi dan Kambing,2023-08,1,0.1111
+berita,0,Bangkalan dan Kesehatan,2023-09,8,1.0
+berita,0,Bangkalan dan Kesehatan,2023-10,3,0.4286
+berita,2,Sampah dan Bangkalan,2023-10,1,0.1429
+berita,3,Bayi dan Puskesmas,2023-10,1,0.1429
+berita,4,Sapi dan Kambing,2023-10,2,0.2857
+berita,0,Bangkalan dan Kesehatan,2023-11,1,0.5
+berita,2,Sampah dan Bangkalan,2023-11,1,0.5
+berita,0,Bangkalan dan Kesehatan,2023-12,3,0.5
+berita,2,Sampah dan Bangkalan,2023-12,3,0.5
+berita,3,Bayi dan Puskesmas,2024-03,14,1.0
+berita,0,Bangkalan dan Kesehatan,2024-04,2,0.5
+berita,2,Sampah dan Bangkalan,2024-04,2,0.5
+berita,0,Bangkalan dan Kesehatan,2024-05,2,1.0
+berita,-1,Outlier / Tidak Terklasifikasi,2024-06,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2024-06,4,0.5714
+berita,1,Covid19 dan Bangkalan,2024-06,1,0.1429
+berita,5,Siswa dan Makanan,2024-06,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2024-07,2,1.0
+berita,0,Bangkalan dan Kesehatan,2024-08,3,0.75
+berita,2,Sampah dan Bangkalan,2024-08,1,0.25
+berita,-1,Outlier / Tidak Terklasifikasi,2024-09,1,0.2
+berita,0,Bangkalan dan Kesehatan,2024-09,3,0.6
+berita,2,Sampah dan Bangkalan,2024-09,1,0.2
+berita,0,Bangkalan dan Kesehatan,2024-10,2,0.4
+berita,1,Covid19 dan Bangkalan,2024-10,1,0.2
+berita,2,Sampah dan Bangkalan,2024-10,2,0.4
+berita,-1,Outlier / Tidak Terklasifikasi,2024-11,1,0.3333
+berita,0,Bangkalan dan Kesehatan,2024-11,2,0.6667
+berita,-1,Outlier / Tidak Terklasifikasi,2024-12,1,0.25
+berita,0,Bangkalan dan Kesehatan,2024-12,2,0.5
+berita,2,Sampah dan Bangkalan,2024-12,1,0.25
+berita,0,Bangkalan dan Kesehatan,2025-01,1,1.0
+berita,-1,Outlier / Tidak Terklasifikasi,2025-02,4,0.6667
+berita,0,Bangkalan dan Kesehatan,2025-02,2,0.3333
+berita,0,Bangkalan dan Kesehatan,2025-03,2,1.0
+berita,0,Bangkalan dan Kesehatan,2025-04,2,1.0
+berita,-1,Outlier / Tidak Terklasifikasi,2025-05,1,0.0909
+berita,0,Bangkalan dan Kesehatan,2025-05,6,0.5455
+berita,1,Covid19 dan Bangkalan,2025-05,1,0.0909
+berita,4,Sapi dan Kambing,2025-05,3,0.2727
+berita,0,Bangkalan dan Kesehatan,2025-06,6,0.8571
+berita,4,Sapi dan Kambing,2025-06,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2025-07,5,0.7143
+berita,2,Sampah dan Bangkalan,2025-07,2,0.2857
+berita,0,Bangkalan dan Kesehatan,2025-08,2,0.4
+berita,1,Covid19 dan Bangkalan,2025-08,3,0.6
+berita,-1,Outlier / Tidak Terklasifikasi,2025-10,1,0.5
+berita,0,Bangkalan dan Kesehatan,2025-10,1,0.5
+berita,-1,Outlier / Tidak Terklasifikasi,2025-11,1,0.2
+berita,0,Bangkalan dan Kesehatan,2025-11,2,0.4
+berita,1,Covid19 dan Bangkalan,2025-11,1,0.2
+berita,2,Sampah dan Bangkalan,2025-11,1,0.2
+berita,-1,Outlier / Tidak Terklasifikasi,2025-12,1,0.25
+berita,0,Bangkalan dan Kesehatan,2025-12,2,0.5
+berita,2,Sampah dan Bangkalan,2025-12,1,0.25
+berita,0,Bangkalan dan Kesehatan,2026-01,2,0.4
+berita,1,Covid19 dan Bangkalan,2026-01,2,0.4
+berita,2,Sampah dan Bangkalan,2026-01,1,0.2
+berita,-1,Outlier / Tidak Terklasifikasi,2026-02,1,0.1429
+berita,0,Bangkalan dan Kesehatan,2026-02,4,0.5714
+berita,1,Covid19 dan Bangkalan,2026-02,1,0.1429
+berita,2,Sampah dan Bangkalan,2026-02,1,0.1429
+berita,-1,Outlier / Tidak Terklasifikasi,2026-03,1,0.2
+berita,0,Bangkalan dan Kesehatan,2026-03,1,0.2
+berita,2,Sampah dan Bangkalan,2026-03,3,0.6
+berita,-1,Outlier / Tidak Terklasifikasi,2026-04,3,0.4286
+berita,0,Bangkalan dan Kesehatan,2026-04,1,0.1429
+berita,1,Covid19 dan Bangkalan,2026-04,2,0.2857
+berita,2,Sampah dan Bangkalan,2026-04,1,0.1429
+berita,-1,Outlier / Tidak Terklasifikasi,2026-05,1,0.1667
+berita,0,Bangkalan dan Kesehatan,2026-05,3,0.5
+berita,2,Sampah dan Bangkalan,2026-05,2,0.3333
+berita,0,Bangkalan dan Kesehatan,2026-06,6,0.3333
+berita,2,Sampah dan Bangkalan,2026-06,1,0.0556
+berita,5,Siswa dan Makanan,2026-06,11,0.6111
+berita,-1,Outlier / Tidak Terklasifikasi,2026-07,3,0.2727
+berita,0,Bangkalan dan Kesehatan,2026-07,3,0.2727
+berita,2,Sampah dan Bangkalan,2026-07,2,0.1818
+berita,3,Bayi dan Puskesmas,2026-07,2,0.1818
+berita,5,Siswa dan Makanan,2026-07,1,0.0909
+berita,0,Bangkalan dan Kesehatan,2026-08,5,0.7143
+berita,2,Sampah dan Bangkalan,2026-08,2,0.2857
+berita,0,Bangkalan dan Kesehatan,2026-09,13,0.7647
+berita,1,Covid19 dan Bangkalan,2026-09,2,0.1176
+berita,2,Sampah dan Bangkalan,2026-09,2,0.1176
+ulasan,0,Bersih dan Bagus,2016-09,9,1.0
+ulasan,0,Bersih dan Bagus,2017-09,39,1.0
+ulasan,0,Bersih dan Bagus,2018-09,80,1.0
+ulasan,0,Bersih dan Bagus,2019-09,70,0.9722
+ulasan,1,Masjid dan Bersih,2019-09,2,0.0278
+ulasan,0,Bersih dan Bagus,2020-09,76,0.9048
+ulasan,1,Masjid dan Bersih,2020-09,8,0.0952
+ulasan,0,Bersih dan Bagus,2021-09,119,0.9297
+ulasan,1,Masjid dan Bersih,2021-09,9,0.0703
+ulasan,0,Bersih dan Bagus,2022-09,221,0.917
+ulasan,1,Masjid dan Bersih,2022-09,20,0.083
+ulasan,0,Bersih dan Bagus,2023-09,173,0.9351
+ulasan,1,Masjid dan Bersih,2023-09,12,0.0649
+ulasan,0,Bersih dan Bagus,2024-09,145,0.9539
+ulasan,1,Masjid dan Bersih,2024-09,7,0.0461
+ulasan,0,Bersih dan Bagus,2025-09,116,0.9062
+ulasan,1,Masjid dan Bersih,2025-09,12,0.0938
+ulasan,0,Bersih dan Bagus,2025-10,7,0.7
+ulasan,1,Masjid dan Bersih,2025-10,3,0.3
+ulasan,0,Bersih dan Bagus,2025-11,11,0.9167
+ulasan,1,Masjid dan Bersih,2025-11,1,0.0833
+ulasan,0,Bersih dan Bagus,2025-12,5,0.8333
+ulasan,1,Masjid dan Bersih,2025-12,1,0.1667
+ulasan,0,Bersih dan Bagus,2026-01,20,1.0
+ulasan,0,Bersih dan Bagus,2026-02,9,0.9
+ulasan,1,Masjid dan Bersih,2026-02,1,0.1
+ulasan,0,Bersih dan Bagus,2026-03,8,0.8889
+ulasan,1,Masjid dan Bersih,2026-03,1,0.1111
+ulasan,0,Bersih dan Bagus,2026-04,9,0.9
+ulasan,1,Masjid dan Bersih,2026-04,1,0.1
+ulasan,0,Bersih dan Bagus,2026-05,19,1.0
+ulasan,0,Bersih dan Bagus,2026-06,17,0.8947
+ulasan,1,Masjid dan Bersih,2026-06,2,0.1053
+ulasan,0,Bersih dan Bagus,2026-07,21,0.913
+ulasan,1,Masjid dan Bersih,2026-07,2,0.087
+ulasan,0,Bersih dan Bagus,2026-08,17,0.8947
+ulasan,1,Masjid dan Bersih,2026-08,2,0.1053
+ulasan,0,Bersih dan Bagus,2026-09,8,0.8889
+ulasan,1,Masjid dan Bersih,2026-09,1,0.1111
